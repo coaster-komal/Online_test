@@ -5,14 +5,7 @@
 	}
 	$user=$_SESSION['sess_user'];
 	$n=$_SESSION['sess_name'];
-	// echo "logged in user-----------".$user;
-	// echo "LOGGED IN USER IS -----";
-	// echo $user;
-
-	/*if(!isset($_GET)) {
-		$topic =$_GET['user_id'];
-		echo "Get". $topic ;
-	}*/
+	
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -136,16 +129,12 @@
 						<a class="navbar-brand" href="produce_result.php">
 							Result
 						</a>
-						<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px; margin-right: 20px;padding: 10px 15px;" class="btn btn-success hidden-md hidden-lg pull-right">
-							Start Test
-						</button>
+						
 						</div>
 						<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav navbar-right">
 							<li>
-								<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px;padding: 10px 15px;" class="btn btn-success hidden-sm">
-									Start Test
-								</button>
+								
 							</li>
 						</ul>
 						</div>
@@ -156,27 +145,21 @@
 					<?php
 							$con=mysqli_connect('localhost','root','') or die(mysql_error());
 							mysqli_select_db($con,'online_test') or die("cannot select DB");
-							$query=mysqli_query($con,"SELECT * FROM tests WHERE user_id='$user' order by StartTest_dateTime desc");
+							$query=mysqli_query($con,"SELECT t.test_id,t.test_name,t.total_ques,s.s_id,s.s_name FROM test t,subject s WHERE s.t_id='$user' and s.s_id=t.sub_id");
 							$numrows=mysqli_num_rows($query);
 
 							if($numrows>0)
 							{
 							while ($row=mysqli_fetch_row($query))
 							{
-								$id=$row[0];
-								$end=strtotime($row[6]);
-								$query1=mysqli_query($con,"select now() from DUAL");
-								$val = mysqli_fetch_array($query1);
-								$sec1=strtotime($val[0]);
-								//if($end<$sec1)
+								
 								echo "<div class='card' style='width: 50%; margin-left: auto; margin-right: auto;' >
-									 <a href='view_result.php?id=$id'>
-									<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'>$row[2]</h4></div>
+									 <a href='view_result.php?id=$row[0]'>
+									<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'>$row[1]</h4></div>
 									<hr style='margin: 0px;'>
 									<div class='' style='width: 100%;'>
-										<div class='card-body' style='padding: 10px;'><b>Start Time :</b> $row[5]</div>
-										<div class='card-body' style='padding: 10px;'><b>End Time : </b> $row[6] </div>
-										<div class='card-body' style='padding: 10px;'><b>Questions : </b> $row[4] </div>
+										<div class='card-body' style='padding: 10px;'><b>Subject :</b> $row[4]</div>
+										<div class='card-body' style='padding: 10px;'><b>Questions : </b> $row[2] </div>
 
 									</div>
 									</a>

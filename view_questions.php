@@ -1,16 +1,33 @@
 <?php
-	session_start();
-	if(!isset($_SESSION["sess_user"])){
-		header("location:index.php");
-	}
-	$user=$_SESSION['sess_user'];
-	$n=$_SESSION['sess_name'];
+		 session_start();
+		 ob_start();
+		 $user=$_SESSION['sess_user'];
+		 $test_id=$_SESSION['sess_test'];
+		 $count=$_SESSION['sess_ques'];
+		 if($count==0)
+		 {
+			 unset($_SESSION['sess_test']);
+			 unset($_SESSION['sess_ques']);
+			 //echo "<script type='text/javascript'>alert('Test Sucessfully Created!!')</script>";
+			header("Location: home.php");
+		 }
+		$con=mysqli_connect('localhost','root','');
+		mysqli_select_db($con,'online_test') or die("cannot select DB");
+		$query=mysqli_query($con,"SELECT * FROM ques_link WHERE test_id='$test_id'");
+		$c=mysqli_num_rows($query);
+		if($c>=$count)
+		{
+			echo "<script type='text/javascript'>alert('$count questions added!!')</script>";
+			header("Location: home.php");
+		}
+		else
+		{
+			$a=$count-$c;
+			echo "<script type='text/javascript'>alert('$a questions still left!!')</script>";
+		}
+		$query=mysqli_query($con,"SELECT * FROM subject WHERE t_id='$user'");
+		?>
 
-	/*if(!isset($_GET)) {
-		$topic =$_GET['user_id'];
-		echo "Get". $topic ;
-	}*/
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,13 +41,11 @@
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
 	<meta name="viewport" content="width=device-width" />
 
-
 	<!-- Bootstrap core CSS     -->
 	<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
 
 	<!--  Paper Dashboard core CSS    -->
 	<link href="assets/css/paper-dashboard.css" rel="stylesheet" />
-
 
 	<!--  CSS for Demo Purpose, don't include it in your project     -->
 	<link href="assets/css/demo.css" rel="stylesheet" />
@@ -69,7 +84,7 @@
 						</a>
 						<div class="collapse in" id="componentsExamples">
 							<ul class="nav">
-								<li>
+								<li class="active">
 									<a href="create_test.php">
 										<span class="sidebar-mini">CT</span>
 										<span class="sidebar-normal">Create Test</span>
@@ -78,13 +93,13 @@
 								<li>
 									<a href="view_test.php">
 										<span class="sidebar-mini">VT</span>
-										<span class="sidebar-normal">View/Edit Test</span>
+										<span class="sidebar-normal">View/Edit test</span>
 									</a>
 								</li>
-								<li class="active">
+								<li>
 									<a href="delete_test.php">
 										<span class="sidebar-mini">DT</span>
-										<span class="sidebar-normal">Delete Test</span>
+										<span class="sidebar-normal">Delete test</span>
 									</a>
 								</li>
 							</ul>
@@ -130,98 +145,144 @@
                 <span class="icon-bar bar2"></span>
                 <span class="icon-bar bar3"></span>
             </button>
-						<a class="navbar-brand" href="delete_test.php">
-							Delete Test
+						<a class="navbar-brand" href="addquestions.php">
+							Add Question
 						</a>
-						
-						</div>
-						<div class="collapse navbar-collapse">
+					</div>
+					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav navbar-right">
-							<li>
-								
-							</li>
+						
 						</ul>
-						</div>
+					</div>
 				</div>
 			</nav>
 			<div class="content">
 			<div class='card-body' style='padding: 10px;'>
-			<form method='post'>
-					<?php
-							$con=mysqli_connect('localhost','root','') or die(mysql_error());
-							mysqli_select_db($con,'online_test') or die("cannot select DB");
-							$query=mysqli_query($con,"SELECT t.test_id,t.test_name,t.start_date,t.duration,t.total_ques FROM test t,subject s WHERE s.t_id='$user' and s.s_id=t.sub_id order by t.start_date desc");
-							$numrows=mysqli_num_rows($query);
-
-							if($numrows>0)
-							while ($row=mysqli_fetch_row($query))
-							{
-								$id=$row[0];
-
-								echo "
-								<div class='card' style='width: 50%; margin-left: auto; margin-right: auto;' >
-									<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;color: #50C1E9; text-shadow: none;'>$row[1]</h4></div>
-									<hr style='margin: 0px;'>
-									<div class='' style='width: 100%;'>
-										<div class='card-body' style='padding: 10px;'><b>Start Date :</b> $row[2]</div>
-										<div class='card-body' style='padding: 10px;'><b>Duration : </b> $row[3] </div>
-										<div class='card-body' style='padding: 10px;'><b>Total Questions : </b> $row[4] </div>
-
-									</div>
-									<div style='padding: 15px; text-align: center; margin-right: 20px;'>
-											<button type='submit' name='delete' value='$row[0]' class='btn btn-danger data-active-color btn-fill pull-right'>Delete Test</button>
-										<div class='clearfix'></div>
-									</div>
+				<h5 style='text-align: center;'>Test ID: <?php echo $test_id ?></h5>
+				<h5 style='text-align: center;'>Question Count :<?php echo $count ?></h5>
+				</div>
+			<div class='card-body' style='padding: 10px;'>
+			<form class="navbar-center navbar-search-form" role="search" method="post">
+					<div class="form-group" style='text-align: center;'>
+						<h4><label>Select Subject</label></h4>
+							<select name="subject" class="form-control" >
+											<?php
+												while($row=mysqli_fetch_row($query))
+												{
+													echo "<option value='$row[0]'>$row[0]  $row[1]</option>";
+												}
+											?>
+							</select>
+							<button type="submit" name="submit" style="margin-left: 10px;margin-top: 10px; height: 40px;" class="btn btn-fill btn-wd ">Select</button>
+					</div>
+				<br>
+				<?php
+				//<label class='form-check-label' for='materialUnchecked'>Material unchecked</label>
+					if(isset($_POST["submit"]))
+					{
+						$sub=$_POST["subject"];
+						$query1=mysqli_query($con,"select qs.ques_id,qs.ques_desc from test t,ques_link q,questions qs where t.sub_id='$sub' and t.test_id=q.test_id and q.q_id=qs.ques_id");
+						echo "<div class='card' style='width: 90%; margin-left: auto; margin-right: auto;' >
+								<div class='table-responsive'>
+									<table class='table'>
+									    <thead style='background-color:#BDCFB7;'>
+									        <tr>
+									            <th class='text-center'>ID</th>
+									            <th>Description</th>
+												<th class='text-right'>Select</th>
+									        </tr>
+									    </thead>
+									    <tbody>";
+													
+														while($row = mysqli_fetch_array($query1))
+														{
+															?>
+															<tr>
+																<td class='text-center'><?php echo $row[0];?></td>
+																<td><?php echo $row[1];?></td>
+																<td><div class='form-check'>
+																	<input style='float:right;' name='check[]' value=<?php echo $row[0];?> type='checkbox' class='form-check-input'>
+																	
+																</div></td>
+															</tr>
+															<?php
+														}
+									   echo " </tbody>
+									</table>
 								</div>
-								";
-
-							}
-							else
-							{
-								echo "<div class='card-body' style='padding: 10px;'><h6 style='margin: 0px;'>NO TEST CREATED BY YOU TILL NOW</h6></div>";
-							}
+				</div>
+				<div style='text-align: center;'>
+					<button type='submit' name='insert' style='line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: auto;margin-bottom: 16px;margin-left: auto; padding: 10px 15px;' class='btn btn-info'>
+						Use Question
+					</button>
+				</div>";
+					}
 				?>
 				</form>
 				<?php
-				if(isset($_POST["delete"]))
-				{
-					$confrm="Test Deleted !!";
-					$id=$_POST["delete"];
-					echo $id;
-					$query3=mysqli_query($con,"delete from useranswer where test_id='$id'");
-					$query2=mysqli_query($con,"delete from result where test_id='$id'");
-					$query1=mysqli_query($con,"delete from ques_link where test_id='$id'");
-					$query=mysqli_query($con,"delete from test where test_id='$id'");
-					
-					if($query && $query1 && $query2)
+					if(isset($_POST['insert']))
 					{
-						echo "<script type='text/javascript'>alert('$confrm');</script>";
-						echo("<script>location.href = '".delete_test.".php';</script>");
+							
+						if(!empty($_POST['check']))
+						{
+							
+							foreach($_POST['check'] as $selected)
+							{
+								
+							
+								$q=mysqli_query($con,"select * from ques_link where test_id='$test_id'");
+								$numrows=mysqli_num_rows($q);
+								if($numrows<$count)
+								{
+									$q1=mysqli_query($con,"insert into ques_link values('$test_id','$selected')");
+									
+								}
+								else
+								{
+									unset($_SESSION['sess_test']);
+									unset($_SESSION['sess_ques']);
+									echo "<script type='text/javascript'>alert('Test Successfully Created!!')</script>";
+									echo("<script>location.href = '".home.".php';</script>");
+								}
+								if($numrows==$count)
+								{
+									unset($_SESSION['sess_test']);
+									unset($_SESSION['sess_ques']);
+									echo "<script type='text/javascript'>alert('Test Successfully Created!!')</script>";
+									echo("<script>location.href = '".home.".php';</script>");
+								}
+							}
+						}
+						else
+							echo "<script type='text/javascript'>alert('Select any option first!!')</script>";
 					}
-
-				}
+					
+				
 				?>
-			</div>
-		</div>
-		<footer class="footer">
-			<div class="container-fluid">
-				<nav class="pull-left">
-					<ul>
-						<li>
-							<a href="new.html">
-									About
-							</a>
-						</li>
-					</ul>
-				</nav>
-				<div class="copyright pull-right">
-					&copy;
-					<script>
-						document.write(new Date().getFullYear())
-					</script>, made with <i class="fa fa-heart heart"></i> by Team MCA
+				</div><br>
+				
 				</div>
-			</div>
-		</footer>
+			
+			<footer class="footer">
+				<div class="container-fluid">
+					<nav class="pull-left">
+						<ul>
+							<li>
+								<a href="new.html">
+                    About
+                </a>
+							</li>
+						</ul>
+					</nav>
+					<div class="copyright pull-right">
+						&copy;
+						<script>
+							document.write(new Date().getFullYear())
+						</script>, made with <i class="fa fa-heart heart"></i> by Team MCA
+					</div>
+				</div>
+			</footer>
+		</div>
 	</div>
 </body>
 
@@ -233,6 +294,7 @@
 
 <!--  Forms Validations Plugin -->
 <script src="assets/js/jquery.validate.min.js"></script>
+
 <!-- Promise Library for SweetAlert2 working on IE -->
 <script src="assets/js/es6-promise-auto.min.js"></script>
 
@@ -286,6 +348,11 @@
 		demo.initOverviewDashboard();
 		demo.initCirclePercentage();
 
+	});
+</script>
+<script type="text/javascript">
+	$().ready(function() {
+		demo.initFormExtendedDatetimepickers();
 	});
 </script>
 

@@ -154,27 +154,28 @@
 					<?php
 							$con=mysqli_connect('localhost','root','') or die(mysql_error());
 							mysqli_select_db($con,'online_test') or die("cannot select DB");
-							$query=mysqli_query($con,"SELECT * FROM tests WHERE user_id='$user' order by StartTest_dateTime desc");
+							$query=mysqli_query($con,"SELECT s.s_name,t.test_id,t.test_name,t.total_ques,t.start_date,t.duration FROM test t,subject s WHERE s.t_id='$user' and s.s_id=t.sub_id order by t.test_id desc");
 							$numrows=mysqli_num_rows($query);
 
 							if($numrows>0)
 							while ($row=mysqli_fetch_row($query))
 							{
-								$id=$row[0];
+								$id=$row[1];
 
 								echo "
 								<div class='card' style='width: 50%; margin-left: auto; margin-right: auto;' >
 								<a href='editTest.php?id=$id'>
-									<div class='card-body card-danger' style='padding: 10px;'><h4 style='margin: 0px;'>$row[2]</h4></div>
+									<div class='card-body card-danger' style='padding: 10px;background-color: #BDCFB7;'><h4 style='margin: 0px;'>$row[2]</h4></div>
 									<hr style='margin: 0px;'>
 									<div class='' style='width: 100%;'>
-										<div class='card-body' style='padding: 10px;'><b>Start Time :</b> $row[5]</div>
-										<div class='card-body' style='padding: 10px;'><b>End Time : </b> $row[6] </div>
-										<div class='card-body' style='padding: 10px;'><b>Questions : </b> $row[4] </div>
+										<div class='card-body' style='padding: 10px;'><b>Subject :</b> $row[0]</div>
+										<div class='card-body' style='padding: 10px;'><b>Total Question : </b> $row[3] </div>
+										<div class='card-body' style='padding: 10px;'><b>Start Date : </b> $row[4] </div>
+										<div class='card-body' style='padding: 10px;'><b>Duration : </b> $row[5] </div>
 
 									</div>
 									<div class='card-footer' style='padding: 10px;'>
-											<button name='delete' value='$row[0]' class='btn btn-danger data-active-color btn-fill pull-right'>Edit Test</button>
+											<button name='delete' value='$row[1]' class='btn btn-danger data-active-color btn-fill pull-right'>Edit Test</button>
 										<div class='clearfix'></div>
 									</div>
 									</a>

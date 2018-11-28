@@ -1,6 +1,20 @@
 <?php
 	session_start();
+	if(!isset($_SESSION["sess_user"])){
+		header("location:index.php");
+	}
 	$user=$_SESSION['sess_user'];
+	$n=$_SESSION['sess_name'];
+<<<<<<< HEAD
+=======
+	// echo "LOGGED IN USER IS -----";
+	// echo $user;
+
+	/*if(!isset($_GET)) {
+		$topic =$_GET['user_id'];
+		echo "Get". $topic ;
+	}*/
+>>>>>>> 9e5ee92163407d2a3a0a160318d14bb81f170aac
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,8 +36,19 @@
 	<!--  Paper Dashboard core CSS    -->
 	<link href="assets/css/paper-dashboard.css" rel="stylesheet" />
 
+
 	<!--  CSS for Demo Purpose, don't include it in your project     -->
 	<link href="assets/css/demo.css" rel="stylesheet" />
+	<style media="">
+	.responsive-cards {
+		width: 47.4%;
+	}
+		@media only screen and (max-width: 700px){
+	    .responsive-cards {
+	        width: 95%;
+	    }
+		}
+	</style>
 
 	<!--  Fonts and icons     -->
 	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
@@ -44,14 +69,19 @@
 			</div>
 			<div class="sidebar-wrapper">
 				<ul class="nav">
-					<li>
+					<li class="active">
 						<a href="home.php">
 	              <i class="ti-panel"></i>
 								<p>Home</p>
 	          </a>
 					</li>
+					
 					<li>
+<<<<<<< HEAD
+						<a href="view_user_result.php">
+=======
 						<a href="produce_result.php">
+>>>>>>> 9e5ee92163407d2a3a0a160318d14bb81f170aac
                 <i class="ti-clipboard"></i>
                 <p>
 									Results
@@ -90,9 +120,9 @@
                 <span class="icon-bar bar2"></span>
                 <span class="icon-bar bar3"></span>
             </button>
-						<a class="navbar-brand" href="start_test.php">
-							Search Test Name
-						</a>
+						<p class="navbar-brand">
+							<b>WELCOME <?php echo $n ?></b>
+						</p>
 						<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px; margin-right: 20px;padding: 10px 15px;" class="btn btn-success hidden-md hidden-lg pull-right">
 							Start Test
 						</button>
@@ -108,61 +138,113 @@
 					</div>
 				</div>
 			</nav>
-			<div class="content" style="padding-top: 5px; margin-top: 10px;">
-				<form class="navbar-left navbar-search-form" role="search" method="post">
-					<div class="" style="display: flex;">
-						<div class="input-group" style="margin-right: auto; margin-left: auto;">
-							<span class="input-group-addon"><i class="fa fa-search"></i></span>
-							<input type="text" name="test_name" class="form-control" style="margin-right: 10px;" placeholder="Search...">
-						</div>
-						<button type="submit" name="submit" style="margin-left: 10px; height: 40px;" class="btn btn-fill btn-wd ">Search</button>
-					</div>
-				</form>
-				<br><br>
-				<hr>
-				<?php
-					if(isset($_POST["submit"]))
-					{
-						if(!empty($_POST['test_name']))
+			<div class="content" style="margin-top: 0px; padding-top: 0px;padding-left: 0px;">
+<<<<<<< HEAD
+				<div class="responsive-cards" style="float: left; margin: 7px; margin-left: 2%; background-color: #BDCFB7; border-radius: 7px;">
+					<h3 style="padding: 10px;">Notification:</h3>
+					<?php
+						$con=mysqli_connect('localhost','root','') or die(mysql_error());
+						mysqli_select_db($con,'online_test') or die("cannot select DB");
+						$q=mysqli_query($con,"select n.t_id,n.time_date,n.comment,c.s_name from student s,subject c,notification n where s.course=c.c_id and c.s_id=n.sub_id and s.user_id='$user'");
+						if(!$q)
+							echo "No notification for you !!";
+						else
 						{
-							$name=$_POST['test_name'];
-							$con=mysqli_connect('localhost','root','') or die(mysql_error());
-							mysqli_select_db($con,'online_test') or die("cannot select DB");
-							$query1=mysqli_query($con,"select now() from DUAL");
-							$val = mysqli_fetch_array($query1);
-							$value=date("Y-m-d", strtotime($val[0]));
-							$query=mysqli_query($con,"SELECT test_id,total_ques,duration,start_date FROM test WHERE test_name='$name' and active=1 and start_date='$value'");
-							$numrows=mysqli_num_rows($query);
-							if($numrows>0)
+						while ($r=mysqli_fetch_row($q))
+						{
+							$q1=mysqli_query($con,"select t_name from teacher where user_id='$r[0]'");
+							$r1=mysqli_fetch_row($q1);
+							?>
+							
+							<div class='card' style='margin: 6px; margin-bottom: 15px;' >
+								<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'><?php echo $r[3];?></h4></div>
+								<hr style='margin: 0px;'>
+								<div class='' style='width: 100%;'>
+									<div class='card-body' style='padding: 10px;'><b>Date :</b> <?php echo $r[1];?></div>
+									<div class='card-body' style='padding: 10px;'><b>By : </b> <?php echo $r1[0];?> </div>
+									<div class='card-body' style='padding: 10px;'><b>Comment : </b> <?php echo $r[2];?> </div>
+								</div>
+							</div>
+							<?php
+						}
+						}
+					?>
+				</div>
+			<div class="responsive-cards" style="float: left; margin: 7px; background-color: #F3EBD6; border-radius: 7px;">
+				<h3 style="padding: 10px;">Your Active Test:</h3>
+				<?php
+						$query1=mysqli_query($con,"select now() from DUAL");
+						$val = mysqli_fetch_array($query1);
+						$value=date("Y-m-d", strtotime($val[0]));
+						$query=mysqli_query($con,"select t.test_id,t.test_name,t.duration,sub.s_name from student s,course c,subject sub,test t where s.course=c.c_id and c.c_id=sub.c_id and sub.s_id=t.sub_id and t.active=1 and s.user_id='$user' and t.start_date='$value'");
+						if($query)
+						{
+							while($row=mysqli_fetch_row($query))
 							{
-							while ($row=mysqli_fetch_row($query))
-							{
-								//printf ("%s (%s)\n",$row[0],$row[1]);
-
 								$id=$row[0];
 
-								echo "<div class='card' style='width: 50%; margin-left: auto; margin-right: auto;' >
-									 <a href='testPage.php?id=$id'>
-									<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'>$name</h4></div>
-									<hr style='margin: 0px;'>
-									<div class='' style='width: 100%;'>
-										<div class='card-body' style='padding: 10px;'><b>Date :</b> $row[3]</div>
-										<div class='card-body' style='padding: 10px;'><b>Duration :</b> $row[2]</div>
-										<div class='card-body' style='padding: 10px;'><b>Questions :</b> $row[1] </div>
-									</div>
+								echo "<div class='card' style='margin: 6px; margin-bottom: 15px;' >
+									<a href='testPage.php?id=$id'>
+										<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'>$row[1]</h4></div>
+										<hr style='margin: 0px;'>
+										<div class='' style='width: 100%;'>
+											<div class='card-body' style='padding: 10px;'><b>Duration :</b> $row[2]</div>
+											<div class='card-body' style='padding: 10px;'><b>Suject : </b> $row[3] </div>
+										</div>
 									</a>
 								</div>";
 							}
-							}
-							else
-								echo "Test not active or not created";
+						}
+						else
+						{
+							echo "<div class='card-body' style='padding: 10px;'><h6 style='margin: 0px;'> No active test for you !!</h6></div>";
+						}
+=======
+
+			<div class="responsive-cards" style="float: left; margin: 7px; margin-left: 2%; background-color: #BDCFB7; border-radius: 7px;">
+				<h3 style="padding: 10px;">Comming Soon Tests:</h3>
+				<?php
+						$pub=1;
+						$con=mysqli_connect('localhost','root','') or die(mysql_error());
+						mysqli_select_db($con,'online_test') or die("cannot select DB");
+						$query1=mysqli_query($con,"select now() from DUAL");
+								$val = mysqli_fetch_array($query1);
+								$sec1=$val[0];
+								$query=mysqli_query($con,"SELECT * FROM tests WHERE type='$pub' and endTest_datetime>'$sec1' and user_id<>'$user'");
+
+								if($query)
+								{
+									$numrows=mysqli_num_rows($query);
+									if($numrows>0)
+									{
+						while ($row=mysqli_fetch_row($query))
+						{
+							$id=$row[0];
+
+							echo "<div class='card' style='margin: 6px; margin-bottom: 15px;' >
+								 <a href='testPage.php?id=$id'>
+								<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'>$row[2]</h4></div>
+								<hr style='margin: 0px;'>
+								<div class='' style='width: 100%;'>
+									<div class='card-body' style='padding: 10px;'><b>Start Time :</b> $row[5]</div>
+									<div class='card-body' style='padding: 10px;'><b>End Time : </b> $row[6] </div>
+									<div class='card-body' style='padding: 10px;'><b>Questions : </b> $row[4] </div>
+								</div>
+								</a>
+							</div>";
 						}
 					}
-				?>
-
+						else
+						{
+							echo "<div class='card-body' style='padding: 10px;'><h6 style='margin: 0px;'>NO UPCOMING PUBLIC TEST </h6></div>";
+						}
+					}
+>>>>>>> 9e5ee92163407d2a3a0a160318d14bb81f170aac
+			?>
+				</div>
+				
 			</div>
-
-			<footer class="footer">
+			<footer class="footer" style="border: 0px;">
 				<div class="container-fluid">
 					<nav class="pull-left">
 						<ul>

@@ -1,6 +1,22 @@
 <?php
 	session_start();
+	if(!isset($_SESSION["sess_user"])){
+		header("location:index.php");
+	}
 	$user=$_SESSION['sess_user'];
+	$n=$_SESSION['sess_name'];
+	$a="teacher";
+	$con=mysqli_connect('localhost','root','') or die(mysql_error());
+	mysqli_select_db($con,'online_test') or die("cannot select DB");
+	$query=mysqli_query($con,"SELECT * FROM course");
+	$query1=mysqli_query($con,"SELECT * FROM user WHERE type='$a'");
+	// echo "LOGGED IN USER IS -----";
+	// echo $user;
+
+	/*if(!isset($_GET)) {
+		$topic =$_GET['user_id'];
+		echo "Get". $topic ;
+	}*/
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,8 +38,19 @@
 	<!--  Paper Dashboard core CSS    -->
 	<link href="assets/css/paper-dashboard.css" rel="stylesheet" />
 
+
 	<!--  CSS for Demo Purpose, don't include it in your project     -->
 	<link href="assets/css/demo.css" rel="stylesheet" />
+	<style media="">
+	.responsive-cards {
+		width: 47.4%;
+	}
+		@media only screen and (max-width: 700px){
+	    .responsive-cards {
+	        width: 95%;
+	    }
+		}
+	</style>
 
 	<!--  Fonts and icons     -->
 	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
@@ -45,34 +72,55 @@
 			<div class="sidebar-wrapper">
 				<ul class="nav">
 					<li>
-						<a href="home.php">
-	              <i class="ti-panel"></i>
+						<a href="a_home.php">
+							<i class="ti-panel"></i>
 								<p>Home</p>
-	          </a>
+						</a>
+					</li>
+					<li >
+						<a href="course.php">
+							<i class="ti-panel"></i>
+								<p>Course</p>
+						</a>
+					</li>
+					<li class="active">
+						<a href="subject.php">
+							<i class="ti-panel"></i>
+								<p>Subject</p>
+						</a>
 					</li>
 					<li>
-						<a href="produce_result.php">
-                <i class="ti-clipboard"></i>
-                <p>
-									Results
-                </p>
-            </a>
+						<a href="teacher.php">
+							<i class="ti-panel"></i>
+								<p>Teacher</p>
+						</a>
 					</li>
+					<li>
+<<<<<<< HEAD
+						<a href="addstudent.php">
+=======
+						<a href="student.php">
+>>>>>>> 9e5ee92163407d2a3a0a160318d14bb81f170aac
+							<i class="ti-panel"></i>
+								<p>Student</p>
+						</a>
+					</li>
+					
 					<li>
 						<a href="changepassword.php">
-                <i class="ti-key"></i>
-                <p>
+							<i class="ti-key"></i>
+							<p>
 									Change Password
-                </p>
-            </a>
+							</p>
+						</a>
 					</li>
 					<li>
 						<a href="logout.php">
-                <i class="ti-share"></i>
-                <p>
+							<i class="ti-share"></i>
+							<p>
 									Logout
-                </p>
-            </a>
+							</p>
+						</a>
 					</li>
 				</ul>
 			</div>
@@ -90,79 +138,123 @@
                 <span class="icon-bar bar2"></span>
                 <span class="icon-bar bar3"></span>
             </button>
-						<a class="navbar-brand" href="start_test.php">
-							Search Test Name
-						</a>
-						<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px; margin-right: 20px;padding: 10px 15px;" class="btn btn-success hidden-md hidden-lg pull-right">
-							Start Test
-						</button>
+						<p class="navbar-brand">
+							<b>WELCOME <?php echo $n ?></b>
+						</p>
+						
 					</div>
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav navbar-right">
-							<li>
-								<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px;padding: 10px 15px;" class="btn btn-success hidden-sm">
-									Start Test
-                </button>
-							</li>
+							
 						</ul>
 					</div>
 				</div>
 			</nav>
-			<div class="content" style="padding-top: 5px; margin-top: 10px;">
-				<form class="navbar-left navbar-search-form" role="search" method="post">
-					<div class="" style="display: flex;">
-						<div class="input-group" style="margin-right: auto; margin-left: auto;">
-							<span class="input-group-addon"><i class="fa fa-search"></i></span>
-							<input type="text" name="test_name" class="form-control" style="margin-right: 10px;" placeholder="Search...">
-						</div>
-						<button type="submit" name="submit" style="margin-left: 10px; height: 40px;" class="btn btn-fill btn-wd ">Search</button>
-					</div>
-				</form>
-				<br><br>
-				<hr>
+			<div class="content" style="margin-top: 0px; padding-top: 0px;padding-left: 0px;">
+
+			<div class="responsive-cards" style="float: left; margin: 7px; margin-left: 2%; background-color: #BDCFB7; border-radius: 7px;">
 				<?php
-					if(isset($_POST["submit"]))
-					{
-						if(!empty($_POST['test_name']))
-						{
-							$name=$_POST['test_name'];
 							$con=mysqli_connect('localhost','root','') or die(mysql_error());
 							mysqli_select_db($con,'online_test') or die("cannot select DB");
-							$query1=mysqli_query($con,"select now() from DUAL");
-							$val = mysqli_fetch_array($query1);
-							$value=date("Y-m-d", strtotime($val[0]));
-							$query=mysqli_query($con,"SELECT test_id,total_ques,duration,start_date FROM test WHERE test_name='$name' and active=1 and start_date='$value'");
-							$numrows=mysqli_num_rows($query);
-							if($numrows>0)
-							{
-							while ($row=mysqli_fetch_row($query))
-							{
-								//printf ("%s (%s)\n",$row[0],$row[1]);
+							$query2=mysqli_query($con,"SELECT * FROM subject");
+							$numrows=mysqli_num_rows($query2);
 
+							if($numrows>0)
+							while ($row=mysqli_fetch_row($query2))
+							{
 								$id=$row[0];
 
-								echo "<div class='card' style='width: 50%; margin-left: auto; margin-right: auto;' >
-									 <a href='testPage.php?id=$id'>
-									<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'>$name</h4></div>
+								echo "<div class='card' style='margin: 6px;margin-bottom: 15px;' >
+									 <a href='editSubject.php?id=$id'>
+									<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'><b>Subject Id :</b>$row[0]</h4></div>
 									<hr style='margin: 0px;'>
 									<div class='' style='width: 100%;'>
-										<div class='card-body' style='padding: 10px;'><b>Date :</b> $row[3]</div>
-										<div class='card-body' style='padding: 10px;'><b>Duration :</b> $row[2]</div>
-										<div class='card-body' style='padding: 10px;'><b>Questions :</b> $row[1] </div>
+										<div class='card-body' style='padding: 10px;'><b>Subject Name :</b> $row[1]</div>
+										<div class='card-body' style='padding: 10px;'><b>Course ID: </b> $row[2] </div>
+										<div class='card-body' style='padding: 10px;'><b>Teacher ID : </b> $row[3] </div>
 									</div>
 									</a>
 								</div>";
 							}
+							else
+							{
+								echo "<div class='card-body' style='padding: 10px;'><h6 style='margin: 0px;'>NO Course Added</h6></div>";
+							}
+				?>
+				</div>
+				<div class="responsive-cards" style="float: right; margin: 7px; padding-left:60px; background-color:; border-radius: 7px;">
+				<div class="">
+							<form method="post">
+								<div class="card" data-background="color" data-color="blue">
+									<div class="card-header">
+										<h3 class="card-title">Add Subject</h3>
+									</div>
+									<div class="card-content">
+										<div class="form-group">
+											<label>Subject ID</label>
+											<input type="text" placeholder="Subject ID" name="username" class="form-control input-no-border">
+										</div>
+										<div class="form-group">
+											<label>Subject Name</label>
+											<input type="text" placeholder="Subject Name" name="password" class="form-control input-no-border">
+										</div>
+									
+										<div class="form-group">
+											<label>Course</label>
+											<select name="course" class="form-control input-no-border">
+											<?php
+												while($row=mysqli_fetch_row($query))
+												{
+													echo "<option value='$row[0]'>$row[0]  $row[1]  $row[2]  $row[3]</option>";
+												}
+											?>
+											</select>
+										</div>
+										<div class="form-group">
+											<label>Teacher</label>
+											<select name="teacher" class="form-control input-no-border">
+											<?php
+												while($row=mysqli_fetch_row($query1))
+												{
+													echo "<option value='$row[0]'>$row[0]  $row[1]</option>";
+												}
+											?>
+											</select>
+										</div>
+									</div>
+									<div class="card-footer text-center">
+										<button type="submit" value="login" name="submit" class="btn btn-fill btn-wd ">ADD</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<?php
+						if(isset($_POST["submit"])){
+							$not="Fill all fields !!";
+							$s_id=$_POST['username'];
+							$s_name=$_POST['password'];
+							$c_id=$_POST['course'];
+							$t_id=$_POST['teacher'];
+							$query=mysqli_query($con,"SELECT * FROM subject where s_id='$s_id'");
+							$numrows=mysqli_num_rows($query);
+							if($numrows==0)
+							{
+								$sql="INSERT INTO subject VALUES('$s_id','$s_name','$c_id','$t_id')";
+								$result=mysqli_query($con,$sql);
+								if($result){
+									//header("Location: index.php");
+									echo "<script type='text/javascript'>alert('successfully added! ')</script>";
+								} else {
+									echo "<script type='text/javascript'>alert('Failure!')</script>";
+								}
 							}
 							else
-								echo "Test not active or not created";
+								echo "<script type='text/javascript'>alert('Subject already exist!')</script>";
 						}
-					}
-				?>
-
+					?>
 			</div>
-
-			<footer class="footer">
+			<footer class="footer" style="border: 0px;">
 				<div class="container-fluid">
 					<nav class="pull-left">
 						<ul>

@@ -2,11 +2,12 @@
 		 session_start();
 		 $test_id=$_SESSION['sess_test'];
 		 $count=$_SESSION['sess_ques'];
+		 $start=$_SESSION['sess_start'];
 		 if($count==0)
 		 {
 			 unset($_SESSION['sess_test']);
 				unset($_SESSION['sess_ques']);
-			header("Location: index.php");
+			header("Location: home.php");
 		 }
 		?>
 
@@ -133,11 +134,7 @@
 					</div>
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav navbar-right">
-						<li>
-								<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px;padding: 10px 15px;" class="btn btn-success hidden-sm">
-									Start Test
-                </button>
-							</li>
+						
 						</ul>
 					</div>
 				</div>
@@ -148,7 +145,7 @@
 						<form method="post">
 							<div class="card-header">
 								<h4 class="card-title">
-										Add Question
+										Add Question <?php echo $start;?>
 									</h4>
 							</div>
 							<div class="card-content">
@@ -224,10 +221,21 @@
 
 			$con=mysqli_connect('localhost','root','');
 			mysqli_select_db($con,'online_test') or die("cannot select DB");
-			mysqli_query($con,"insert into questions(test_id,ques_desc,opt1,opt2,opt3,opt4,curr_ans) values ('$test_id','$des','$opt1','$opt2','$opt3','$opt4','$curr_ans')");
+			$sql="insert into questions(ques_desc,opt1,opt2,opt3,opt4,curr_ans) values ('$des','$opt1','$opt2','$opt3','$opt4','$curr_ans')";
+			if ($con->query($sql) === TRUE) {
+				echo "abcd";
+						$last_id = mysqli_insert_id($con);
+						mysqli_query($con,"insert into ques_link values ('$test_id','$last_id')");
+
 			--$count;
+<<<<<<< HEAD
+			++$start;
+=======
+>>>>>>> 9e5ee92163407d2a3a0a160318d14bb81f170aac
+			}
 			@$_SESSION['sess_ques']=$count;
-			echo "count1=".$count;
+			@$_SESSION['sess_start']=$start;
+			echo "<script type='text/javascript'>alert('$start question added!!')</script>";
 			echo "<p align=center>Question Added Successfully.</p>";
 			if($count==0)
 			{

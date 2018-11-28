@@ -12,13 +12,14 @@
 		 }*/
 		 $con=mysqli_connect('localhost','root','') or die(mysql_error());
 		 mysqli_select_db($con,'online_test') or die("cannot select DB");
-		 $query=mysqli_query($con,"SELECT * FROM questions WHERE test_id='$test_id'");
+		 $query=mysqli_query($con,"SELECT q.ques_id,q.ques_desc,q.opt1,q.opt2,q.opt3,q.opt4,q.curr_ans FROM questions q,ques_link ql WHERE ql.test_id='$test_id' and ql.q_id=q.ques_id");
 		 $numrows=mysqli_num_rows($query);
 		 $noques="NO QUESTIONS ADDED, FIRST ADD QUESTIONS !!";
 		 if($numrows==0)
 		 {
+			 @$_SESSION['sess_start']=1;
 			 echo "<script type='text/javascript'>alert('$noques');</script>";
-			 echo("<script>location.href = '".addquestions.".php';</script>");
+			 echo("<script>location.href = '".select_type.".php';</script>");
 		 }
 		 $i=1;
 		$j=0;
@@ -35,7 +36,6 @@
 			$questions[$j][4]=$row[4];
 			$questions[$j][5]=$row[5];
 			$questions[$j][6]=$row[6];
-			$questions[$j][7]=$row[7];
 			$i=$i+1;
 			$j=$j+1;
 
@@ -167,9 +167,7 @@
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav navbar-right">
 						<li>
-								<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px;padding: 10px 15px;" class="btn btn-success hidden-sm">
-									Start Test
-                </button>
+								
 							</li>
 						</ul>
 					</div>
@@ -196,34 +194,34 @@
 									<label class="control-label">
 											Question Description <star>*</star>
 									</label>
-									<input class="form-control" name="desc" rows="3" value="<?php echo $questions[$x][2] ?>" default="0" type="text" required="true" email="true" autocomplete="off" aria-required="true">
+									<input class="form-control" name="desc" rows="3" value="<?php echo $questions[$x][1] ?>" default="0" type="text" required="true" email="true" autocomplete="off" aria-required="true">
 								</div>
 								<div class="form-group">
 									<label class="control-label">
 											Option 1 <star>*</star>
 									</label>
-									<input class="form-control" name="op1" rows="3" value="<?php echo $questions[$x][3] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">
+									<input class="form-control" name="op1" rows="3" value="<?php echo $questions[$x][2] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">
 								</div>
 								<div class="form-group">
 									<label class="control-label">
 											Option 2 <star>*</star>
 									</label>
-									<input class="form-control" name="op2" rows="3" value="<?php echo $questions[$x][4] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">								</div>
+									<input class="form-control" name="op2" rows="3" value="<?php echo $questions[$x][3] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">								</div>
 								<div class="form-group">
 									<label class="control-label">
 											Option 3 <star>*</star>
 									</label>
-                                    <input class="form-control" name="op3" rows="3" value="<?php echo $questions[$x][5] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">								</div>
+                                    <input class="form-control" name="op3" rows="3" value="<?php echo $questions[$x][4] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">								</div>
 								<div class="form-group">
 									<label class="control-label">
 											Option 4 <star>*</star>
 									</label>
-									<input class="form-control" name="op4" rows="3" value="<?php echo $questions[$x][6] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">								</div>
+									<input class="form-control" name="op4" rows="3" value="<?php echo $questions[$x][4] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">								</div>
 								<div class="form-group">
 									<label class="control-label">
 											Correct Answer <star>*</star>
 									</label>
-									<input class="form-control" name="curr_ans" rows="3" value="<?php echo $questions[$x][7] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">								</div>
+									<input class="form-control" name="curr_ans" rows="3" value="<?php echo $questions[$x][6] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">								</div>
 								<br>
 								<div class="category">
 									<star>*</star> Required fields</div>
@@ -247,9 +245,6 @@
 		{
 			$qid=$_POST["update"];
 			echo $qid;
-		if(!empty($_POST['desc']) || !empty($_POST['op1']) || !empty($_POST['op2']) || !empty($_POST['op3']) || !empty($_POST['op4']) || !empty($_POST['curr_ans']))
-		{
-
 			$updated="Question updated !!";
 			$des=$_POST['desc'];
 			$opt1=$_POST['op1'];
@@ -260,14 +255,14 @@
 
 			$con=mysqli_connect('localhost','root','');
 			mysqli_select_db($con,'online_test') or die("cannot select DB");
-			$sql=mysqli_query($con,"UPDATE questions SET ques_desc='$des',opt1='$opt1',opt2='$opt2',opt3='$opt3',opt4='$opt4',curr_ans='$curr_ans' where test_id='$test_id' and ques_id='$qid' ");
+			$sql=mysqli_query($con,"UPDATE questions SET ques_desc='$des',opt1='$opt1',opt2='$opt2',opt3='$opt3',opt4='$opt4',curr_ans='$curr_ans' where ques_id='$qid' ");
 			if($sql)
 			{
 				echo "<script type='text/javascript'>alert('$updated');</script>";
 				echo("<script>location.href = '".editquestions.".php';</script>");
 			}
 
-		}
+		
 		}
 	?>
 		</div>

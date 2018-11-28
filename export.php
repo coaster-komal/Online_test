@@ -8,7 +8,7 @@ $id=$_SESSION["tn"];
  
 $query=mysqli_query($con,"SELECT * FROM result WHERE test_id='$id'");
 //$stmt->execute();
-$query1=mysqli_query($con,"SELECT test_name FROM tests WHERE test_id='$id'");
+$query1=mysqli_query($con,"SELECT test_name FROM test WHERE test_id='$id'");
 $numrows=mysqli_num_rows($query1);
 	$sql=mysqli_fetch_row($query1);
 	$nam=$sql[0];

@@ -118,25 +118,49 @@
 		$confrm="Incorrect username or password !!";
 		$con=mysqli_connect('localhost','root','') or die(mysql_error());
 		mysqli_select_db($con,'online_test') or die("cannot select DB");
-		$result=mysqli_query($con,"SELECT * FROM register WHERE username='".$user."' AND password='".$pass."'");
+		$result=mysqli_query($con,"SELECT * FROM user WHERE u_handle='".$user."' AND u_pass='".$pass."'");
 		$numrows=mysqli_num_rows($result);
 		if($numrows!=0)
 		{
-			while($row=mysqli_fetch_assoc($result))
-			{
-				$dbusername=$row['username'];
-				$dbpassword=$row['password'];
-			}
+			$row=mysqli_fetch_assoc($result);
+				$dbusername=$row['u_handle'];
+				$dbpassword=$row['u_pass'];
 			if($user == $dbusername && $pass == $dbpassword)
 			{
-				$result=mysqli_query($con,"SELECT user_id FROM register WHERE username='".$user."' AND password='".$pass."'");
+				$result=mysqli_query($con,"SELECT user_id,type FROM user WHERE u_handle='".$user."' AND u_pass='".$pass."'");
 				$row=mysqli_fetch_assoc($result);
 				session_start();
 				@$_SESSION['sess_user']=$row['user_id'];
-				@$_SESSION['sess_name']=$user;
+				$u=$row['user_id'];
 				echo "logged in session started";
-
-				header("Location: home.php");
+				$type=$row['type'];
+				if($type=='teacher')
+<<<<<<< HEAD
+				{
+					$query=mysqli_query($con,"select t_name from teacher where user_id='$u'");
+					$row=mysqli_fetch_row($query);
+					@$_SESSION['sess_name']=$row[0];
+					header("Location: home.php");
+				}
+				if($type=='student')
+				{
+					$query=mysqli_query($con,"select u_name from student where user_id='$u']'");
+					$row=mysqli_fetch_row($query);
+					@$_SESSION['sess_name']=$row[0];
+					header("Location: s_home.php");
+				}
+				if($type=='admin')
+				{
+					@$_SESSION['sess_name']="admin";
+					header("Location: a_home.php");
+				}
+=======
+					header("Location: home.php");
+				if($type=='student')
+					header("Location: s_home.php");
+				if($type=='admin')
+					header("Location: a_home.php");
+>>>>>>> 9e5ee92163407d2a3a0a160318d14bb81f170aac
 			}
 		} else {
 			echo "<script type='text/javascript'>alert('$confrm');</script>";

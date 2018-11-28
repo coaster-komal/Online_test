@@ -3,17 +3,18 @@
 	$user=$_SESSION['sess_user'];
 	$n=$_SESSION['sess_name'];
 	$id=$_SESSION['test_id'];
+	
 	//$id=44;
 	$con=mysqli_connect('localhost','root','') or die(mysql_error());
 	mysqli_select_db($con,'online_test') or die("cannot select DB");
-	$query=mysqli_query($con,"SELECT * FROM tests WHERE test_id='$id'");
+	$query=mysqli_query($con,"SELECT * FROM test WHERE test_id='$id'");
 	if($query)
 	{
 		$row=mysqli_fetch_row($query);
-		$pt_curr=$row[7];
-		$pt_neg=$row[8];
-		$limit=$row[9];
-		$totalq=$row[4];
+		$pt_curr=$row[6];
+		$pt_neg=$row[7];
+		$limit=$row[8];
+		$totalq=$row[5];
 		$c=0;
 		$correct=0;
 		$wrong=0;
@@ -40,8 +41,6 @@
 				$flag=1;
 		}
 		$query2=mysqli_query($con,"insert into result (`user_id`, `test_id`, `username`, `result`) values ('$user','$id','$n','$c')");
-		if($query2)
-		echo "inserted!!";
 	}
 ?>
 <!DOCTYPE html>
@@ -87,43 +86,13 @@
 			<div class="sidebar-wrapper">
 				<ul class="nav">
 					<li>
-						<a href="home.php">
+						<a href="s_home.php">
 	              <i class="ti-panel"></i>
 								<p>Home</p>
 	          </a>
 					</li>
-					<li>
-						<a data-toggle="collapse" href="#componentsExamples">
-							<i class="ti-ruler-pencil"></i>
-							<p>Tests
-							   <b class="caret"></b>
-							</p>
-						</a>
-						<div class="collapse" id="componentsExamples">
-							<ul class="nav">
-								<li>
-									<a href="create_test.php">
-										<span class="sidebar-mini">CT</span>
-										<span class="sidebar-normal">Create Test</span>
-									</a>
-								</li>
-								<li>
-									<a href="view_test.php">
-										<span class="sidebar-mini">VT</span>
-										<span class="sidebar-normal">View/Edit Test</span>
-									</a>
-								</li>
-								<li class="">
-									<a href="delete_test.php">
-										<span class="sidebar-mini">DT</span>
-										<span class="sidebar-normal">Delete Test</span>
-									</a>
-								</li>
-							</ul>
-						</div>
-					</li>
 					<li class="active">
-						<a href="produce_result.php">
+						<a href="view_user_result.php">
                 <i class="ti-clipboard"></i>
                 <p>
 									Results
@@ -162,7 +131,7 @@
                 <span class="icon-bar bar2"></span>
                 <span class="icon-bar bar3"></span>
             </button>
-						<a class="navbar-brand" href="user_result.php">
+						<a class="navbar-brand" href="">
 							Your Result
 						</a>
 
@@ -170,9 +139,6 @@
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav navbar-right">
 						<li>
-								<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px;padding: 10px 15px;" class="btn btn-success hidden-sm">
-									Start Test
-                </button>
 							</li>
 						</ul>
 					</div>
@@ -233,6 +199,13 @@
 			</footer>
 		</div>
 	</div>
+	<?php
+	$query=mysqli_query($con,"delete from useranswer where test_id='$id'");
+	unset($_SESSION['test_id']);
+	unset($_SESSION['ques_num']);
+	unset($_SESSION['start_num']);
+	unset($_SESSION['duration']);
+	?>
 </body>
 
 <!--   Core JS Files. Extra: TouchPunch for touch library inside jquery-ui.min.js   -->

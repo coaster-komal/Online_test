@@ -5,7 +5,8 @@
 		 $id=$_GET["id"];
 		 $con=mysqli_connect('localhost','root','');
 		mysqli_select_db($con,'online_test') or die("cannot select DB");
-		$query=mysqli_query($con,"SELECT *FROM tests WHERE test_id='$id'");
+		$query1=mysqli_query($con,"select * from subject where t_id='$user'");
+		$query=mysqli_query($con,"SELECT t.test_id,t.test_name,t.start_date,t.duration,t.total_ques,t.pt_curr,t.pt_neg,t.pass_limit FROM test t,subject s WHERE t.test_id='$id' and t.sub_id=s.s_id");
 		$numrows=mysqli_num_rows($query);
 		if($numrows>0)
 		{
@@ -137,9 +138,7 @@
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav navbar-right">
 						<li>
-								<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px;padding: 10px 15px;" class="btn btn-success hidden-sm">
-									Start Test
-                </button>
+								
 							</li>
 						</ul>
 					</div>
@@ -159,14 +158,9 @@
 									<label class="control-label">
 											Name <star>*</star>
 									</label>
-									<input class="form-control" name="testname" value="<?php echo $row[2] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">
+									<input class="form-control" name="testname" value="<?php echo $row[1] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">
 								</div>
-								<div class="form-group">
-									<label class="control-label">
-											Category
-									</label>
-									<input class="form-control" name="category" value="<?php echo $row[3] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">
-								</div>
+								
 								<div class="form-group">
 									<label class="control-label">
 											Total Questions <star>*</star>
@@ -177,38 +171,39 @@
 									<label class="control-label">
 											Correct Answers Marks
 									</label>
-									<input class="form-control" name="curr_ans" value="<?php echo $row[7] ?>" default="1" value="1" type="text" required="true" email="true" autocomplete="off" aria-required="true">
+									<input class="form-control" name="curr_ans" value="<?php echo $row[5] ?>" default="1" value="1" type="text" required="true" email="true" autocomplete="off" aria-required="true">
 								</div>
 								<div class="form-group">
 									<label class="control-label">
 											Worng Answers Penalty
 									</label>
-									<input class="form-control" name="wng_ans" value="<?php echo $row[8] ?>" default="0" value="0" type="text" required="true" email="true" autocomplete="off" aria-required="true">
+									<input class="form-control" name="wng_ans" value="<?php echo $row[6] ?>" default="0" value="0" type="text" required="true" email="true" autocomplete="off" aria-required="true">
 								</div>
 								<div class="form-group">
 									<label class="control-label">
 											Passing Marks
 									</label>
-									<input class="form-control" name="limit" value="<?php echo $row[9] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">
+									<input class="form-control" name="limit" value="<?php echo $row[7] ?>" type="text" required="true" email="true" autocomplete="off" aria-required="true">
 								</div>
 								<div class="form-group">
 									<label class="control-label">
-											Start at <star>*</star>
+											Start Date <star>*</star>
 									</label>
-									<input type="text" name="st_datetime" value="<?php $d=strtotime($row[5]); $d=date('m/d/Y h:i A',$d); echo $d ?>"class="form-control datetimepicker" placeholder="Start Date and Time" />
+									<input type="text" name="start_date" value="<?php echo $row[2] ?>" placeholder="Start Date and Time" />
 								</div>
 								<div class="form-group">
 									<label class="control-label">
-											End at <star>*</star>
+											Duration <star>*</star>
+											<h7>Select Duration in AM</h7>
 									</label>
-									<input type="text" name="end_datetime" value="<?php $d=strtotime($row[6]); $d=date('m/d/Y h:i A',$d); echo $d ?> "class="form-control datetimepicker" placeholder="End Date and Time" />
+									<input type="text" name="duration" value="<?php echo $row[3] ?> "class="form-control timepicker" placeholder="End Date and Time" />
 								</div>
 								<br>
 								<div class="category">
 									<star>*</star> Required fields</div>
 							</div>
 							<div class="card-footer">
-								<button type="submit" action="editquestions.php" name="update" class="btn btn-info btn-fill pull-right">UPDATE</button>
+								<button type="submit" name="update" class="btn btn-info btn-fill pull-right">UPDATE</button>
 
 								<div class="clearfix"></div>
 							</div>
@@ -221,25 +216,18 @@
 			 {
 				 $cannot="Change values to update";
 				 $updated="Updated values !!";
-			 	if(!empty($_POST['testname']) || !empty($_POST['category']) || !empty($_POST['totalq']) || !empty($_POST['curr_ans']) || !empty($_POST['wng_ans']) || !empty($_POST['limit']) || !empty($_POST['st_datetime']) || !empty($_POST['end_datetime']))
-			 	{
+			 	
 
 					$test_name=$_POST['testname'];
-			 		$category=$_POST['category'];
+			 		
 			 		$totalq=$_POST['totalq'];
-			 		$st_date=$_POST['st_datetime'];
-			 		$end_date=$_POST['end_datetime'];
+			 		$start_date=$_POST['start_date'];
+			 		$duration=$_POST['duration'];
 			 		$curr_ans=$_POST['curr_ans'];
 			 		$wng_ans=$_POST['wng_ans'];
 			 		$limit=$_POST['limit'];
-					$st_date=date("Y-m-d H:i", strtotime($st_date));
-					$st_date=$st_date.":00";
-					$end_date=date("Y-m-d H:i", strtotime($end_date));
-					$end_date=$end_date.":00";
-
-			 		$con=mysqli_connect('localhost','root','') or die(mysql_error());
-			 		mysqli_select_db($con,'online_test') or die("cannot select DB");
-			 		$sql=mysqli_query($con,"UPDATE `tests` SET test_name='$test_name', category='$category', total_ques='$totalq', startTest_dateTime='$st_date', endTest_datetime='$end_date', pt_curr='$curr_ans', pt_neg='$wng_ans', pass_limit='$limit' WHERE test_id='$id'");
+					$start_date=date("Y-m-d", strtotime($start_date));
+			 		$sql=mysqli_query($con,"UPDATE `test` SET test_name='$test_name', total_ques='$totalq', start_date='$start_date', duration='$duration', pt_curr='$curr_ans', pt_neg='$wng_ans', pass_limit='$limit' WHERE test_id='$id'");
 					if($sql)
 					{
 						echo "<script type='text/javascript'>alert('$updated');</script>";
@@ -250,11 +238,7 @@
 						//header('Location: editquestions.php');
 					}
 
-			 	}
-			 	else
-			 	{
-			 		echo "<script type='text/javascript'>alert('$cannot');</script>";
-			 	}
+			 	
 			 }
 ?>
 		<footer class="footer">

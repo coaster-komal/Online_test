@@ -1,17 +1,13 @@
 <?php
 	session_start();
 	$user=$_SESSION['sess_user'];
-	$_SESSION["test_id"] = $_GET["id"];
-	$id=$_SESSION['test_id'];
-	date_default_timezone_set('Indian/Comoro');
 	$con=mysqli_connect('localhost','root','') or die(mysql_error());
 	mysqli_select_db($con,'online_test') or die("cannot select DB");
-	$flag=0;
-	$query=mysqli_query($con,"select * from result where user_id='$user' and test_id='$id'");
-	$numrows=mysqli_num_rows($query);
-	if($numrows>0)
-		$flag=1;
+	$query=mysqli_query($con,"select * from subject where t_id='$user'");
+	
+	
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,7 +34,6 @@
 	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Muli:400,300" rel="stylesheet" type="text/css">
 	<link href="assets/css/themify-icons.css" rel="stylesheet">
-
 </head>
 
 <body>
@@ -59,6 +54,36 @@
 	              <i class="ti-panel"></i>
 								<p>Home</p>
 	          </a>
+					</li>
+					<li class="active">
+						<a data-toggle="collapse" href="#componentsExamples">
+							<i class="ti-ruler-pencil"></i>
+							<p>Tests
+							   <b class="caret"></b>
+							</p>
+						</a>
+						<div class="collapse in" id="componentsExamples">
+							<ul class="nav">
+								<li class="active">
+									<a href="create_test.php">
+										<span class="sidebar-mini">CT</span>
+										<span class="sidebar-normal">Create Test</span>
+									</a>
+								</li>
+								<li>
+									<a href="view_test.php">
+										<span class="sidebar-mini">VT</span>
+										<span class="sidebar-normal">View/Edit test</span>
+									</a>
+								</li>
+								<li>
+									<a href="delete_test.php">
+										<span class="sidebar-mini">DT</span>
+										<span class="sidebar-normal">Delete test</span>
+									</a>
+								</li>
+							</ul>
+						</div>
 					</li>
 					<li>
 						<a href="produce_result.php">
@@ -100,80 +125,80 @@
                 <span class="icon-bar bar2"></span>
                 <span class="icon-bar bar3"></span>
             </button>
-						<a class="navbar-brand" href="testPage.php">
-							Rules
+						<a class="navbar-brand" href="add_notification.php">
+							Add Notifications
 						</a>
+					</div>
+					<div class="collapse navbar-collapse">
+						<ul class="nav navbar-nav navbar-right">
+						
+						</ul>
 					</div>
 				</div>
 			</nav>
-			<div class="content" style="">
-
-					<div style="height: 40vh;">
-						<div class="" style=" display: block; width: 97.5%; height: 40vh; z-index: -1; position: absolute; overflow: hidden;">
-							<img src="assets/test.jpg" alt="" style=" background-size: cover;">
-						</div>
-						<div style="margin-left: auto; margin-right: auto; font-size: 1.5em; text-align: center; color: white; width: 500px; padding-top: 20vh;"></div>
-						<br>
+			<div class="content">
+				<div style="width: 60%; margin-left: auto; margin-right: auto;">
+					<div class="card">
 						<form method="post">
-							<h2 style="margin-left:auto; margin-right:auto;"><?php if($flag==1) echo "You Have given the test";?></h2>
-							<button type="submit" name="start" class="btn btn-success" style="display: block;margin-left: auto; margin-right: auto; width: 100px;display:<?php //if($flag==1) echo "none";?>">Start</button>
+							<div class="card-header">
+								<h4 class="card-title">
+										Add Notification
+									</h4>
+							</div>
+							<div class="card-content">
+								<div class="form-group">
+											<label class="control-label">Select Subject</label>
+											<select name="subject" class="form-control input-no-border">
+											<?php
+												while($row=mysqli_fetch_row($query))
+												{
+													echo "<option value='$row[0]'>$row[1]</option>";
+												}
+											?>
+											</select>
+										</div>
+										<div class="form-group">
+									<label class="control-label">
+											Validity of Notification <star>*</star>
+									</label>
+									<input class="form-control datetimepicker" name="time" type="text" required="true" email="true" autocomplete="off" aria-required="true">
+								</div>
+								<div class="form-group">
+									<label class="control-label">
+											Notification Description <star>*</star>
+									</label>
+									<textarea name="desc" maxlength="700" class="form-control" placeholder="Enter Notification" rows="3"></textarea>
+								</div>
+								<br>
+								<div class="category">
+									<star>*</star> Required fields</div>
+							</div>
+							<div class="card-footer">
+								<button type="submit" name="submit" class="btn btn-info btn-fill pull-right">Submit</button>
+								<button type="reset" style="margin-right: 20px;" class="btn btn-danger btn-fill pull-right">Reset</button>
+								<div class="clearfix"></div>
+							</div>
 						</form>
 					</div>
-					<?php
-							$query1=mysqli_query($con,"select now() from DUAL");
-							$val = mysqli_fetch_array($query1);
-							$value=date("Y-m-d", strtotime($val[0]));
-							$query=mysqli_query($con,"SELECT * FROM test WHERE test_id='$id' and start_date='$value'");
-							$numrows=mysqli_num_rows($query);
-							if($numrows>0)
-							{
-								$row=mysqli_fetch_row($query);
-
-								echo "<div class='card' style='width: 50%; background-color: #F3EBD6; margin-left: auto; margin-right: auto; padding: 5px;' >
-									<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'>$row[2]</h4></div>
-									<hr style='margin: 0px;'>
-									<div class='' style='width: 100%;'>
-										<div class='card-body' style='padding: 10px;'><b>Duration :</b> $row[4]</div>
-										<div class='card-body' style='padding: 10px;'><b>Questions :</b> $row[5] </div>
-										<div class='card-body' style='padding: 10px;'><b>Points on correct answer :</b> $row[6] </div>
-										<div class='card-body' style='padding: 10px;'><b>Points deducted on wrong answer :</b> $row[7] </div>
-										<div class='card-body' style='padding: 10px;'><b>Passing marks :</b> $row[8] </div>
-									</div>
-								</div>
-								";
-							}
-							else
-								echo "<script type='text/javascript'>alert('TEST NOT STARTED!!');</script>";
-						?>
-						<?php
-							if(isset($_POST['start']))
-							{
-								//$query=mysqli_query($con,"select now() from DUAL");
-								//echo "<script>console$query</script>";
-								//$row=mysql_fetch_assoc($query);
-								//echo $row;
-								//$query1=mysqli_query($con,"SELECT * FROM result WHERE test_id='$id' and user_id='$user'");
-								//$numrows=mysqli_num_rows($query1);
-								/*if($numrows>0)
-								{
-									echo "<script type='text/javascript'>alert('YOU HAVE GIVEN THE TEST !!');</script>";
-								}
-								else
-								{*/
-									@$_SESSION['ques_num']=$row[5];
-									@$_SESSION['start_num']=0;
-									@$_SESSION['test_id']=$row[0];
-									@$_SESSION['duration']=$row[4];
-									
-									//@$_SESSION['endtime']=date('m/d/Y h:i:s a', time());
-									echo("<script>location.href = '".test.".php';</script>");
-								//}
-								
-							}
-
-					?>
-					<br>
+				</div>
 			</div>
+	<?php
+
+		if(isset($_POST["submit"])){
+		if(!empty($_POST['subject']))
+		{
+
+			$des=$_POST['desc'];
+			$time=$_POST['time'];
+			$subject=$_POST['subject'];
+			$time=date('Y-m-d H:i:s', strtotime($time));
+			$query=mysqli_query($con,"insert into notification(t_id,sub_id,time_date,comment) values ('$user','$subject','$time','$des')");
+			if($query)
+				echo "<script type='text/javascript'>alert('Notification Added!')</script>";
+		}
+
+		}
+	?>
 			<footer class="footer">
 				<div class="container-fluid">
 					<nav class="pull-left">
@@ -259,6 +284,11 @@
 		demo.initOverviewDashboard();
 		demo.initCirclePercentage();
 
+	});
+</script>
+<script type="text/javascript">
+	$().ready(function() {
+		demo.initFormExtendedDatetimepickers();
 	});
 </script>
 

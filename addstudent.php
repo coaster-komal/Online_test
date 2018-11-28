@@ -1,17 +1,13 @@
 <?php
 	session_start();
 	$user=$_SESSION['sess_user'];
-	$_SESSION["test_id"] = $_GET["id"];
-	$id=$_SESSION['test_id'];
-	date_default_timezone_set('Indian/Comoro');
 	$con=mysqli_connect('localhost','root','') or die(mysql_error());
 	mysqli_select_db($con,'online_test') or die("cannot select DB");
-	$flag=0;
-	$query=mysqli_query($con,"select * from result where user_id='$user' and test_id='$id'");
-	$numrows=mysqli_num_rows($query);
-	if($numrows>0)
-		$flag=1;
+	$query=mysqli_query($con,"select * from subject where t_id='$user'");
+	$que=mysqli_query($con,"SELECT * FROM course");
+	
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,7 +34,6 @@
 	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Muli:400,300" rel="stylesheet" type="text/css">
 	<link href="assets/css/themify-icons.css" rel="stylesheet">
-
 </head>
 
 <body>
@@ -55,19 +50,36 @@
 			<div class="sidebar-wrapper">
 				<ul class="nav">
 					<li>
-						<a href="home.php">
+						<a href="a_home.php">
 	              <i class="ti-panel"></i>
 								<p>Home</p>
 	          </a>
 					</li>
-					<li>
-						<a href="produce_result.php">
-                <i class="ti-clipboard"></i>
-                <p>
-									Results
-                </p>
-            </a>
+					<li >
+						<a href="course.php">
+							<i class="ti-panel"></i>
+								<p>Course</p>
+						</a>
 					</li>
+					<li>
+						<a href="subject.php">
+							<i class="ti-panel"></i>
+								<p>Subject</p>
+						</a>
+					</li>
+					<li>
+						<a href="teacher.php">
+							<i class="ti-panel"></i>
+								<p>Teacher</p>
+						</a>
+					</li>
+					<li class="active">
+						<a href="addstudent.php">
+							<i class="ti-panel"></i>
+								<p>Student</p>
+						</a>
+					</li>
+					
 					<li>
 						<a href="changepassword.php">
                 <i class="ti-key"></i>
@@ -100,80 +112,98 @@
                 <span class="icon-bar bar2"></span>
                 <span class="icon-bar bar3"></span>
             </button>
-						<a class="navbar-brand" href="testPage.php">
-							Rules
+						<a class="navbar-brand" href="add_notification.php">
+							Add Student
 						</a>
+					</div>
+					<div class="collapse navbar-collapse">
+						<ul class="nav navbar-nav navbar-right">
+						
+						</ul>
 					</div>
 				</div>
 			</nav>
-			<div class="content" style="">
-
-					<div style="height: 40vh;">
-						<div class="" style=" display: block; width: 97.5%; height: 40vh; z-index: -1; position: absolute; overflow: hidden;">
-							<img src="assets/test.jpg" alt="" style=" background-size: cover;">
-						</div>
-						<div style="margin-left: auto; margin-right: auto; font-size: 1.5em; text-align: center; color: white; width: 500px; padding-top: 20vh;"></div>
-						<br>
+			<div class="content">
+				<div style="width: 60%; margin-left: auto; margin-right: auto;">
+					<div class="card">
 						<form method="post">
-							<h2 style="margin-left:auto; margin-right:auto;"><?php if($flag==1) echo "You Have given the test";?></h2>
-							<button type="submit" name="start" class="btn btn-success" style="display: block;margin-left: auto; margin-right: auto; width: 100px;display:<?php //if($flag==1) echo "none";?>">Start</button>
+							<div class="card-header">
+								<h4 class="card-title">
+										Add Student
+									</h4>
+							</div>
+							<div class="card-content">
+								<div class="form-group">
+									<label class="control-label">
+										User Handle <star>*</star>
+									</label>
+									<input type="text" name="userh" placeholder="User Handle" class="form-control">
+								</div>
+								<div class="form-group">
+									<label class="control-label">
+										User Name <star>*</star>
+									</label>
+									<input type="text" name="username" placeholder="User Name" class="form-control">
+								</div>
+								<div class="form-group">
+											<label>Course</label>
+											<select name="course" class="form-control input-no-border">
+											<?php
+												while($row=mysqli_fetch_row($que))
+												{
+													echo "<option value='$row[0]'>$row[0]  $row[1]  $row[2]  $row[3]</option>";
+												}
+											?>
+											</select>
+										</div>
+								<div class="form-group">
+									<label class="control-label">
+										Password <star>*</star>
+									</label>
+									<input type="text" name="pass" placeholder="Password" class="form-control" pattern=".{5-15}">
+								</div>
+				
+								<div class="form-group">
+									<label class="control-label">
+											Joining Year <star>*</star>
+									</label>
+									<input class="form-control" name="jyear" placeholder="Joining Year" type="text" required="true" email="true" autocomplete="off" aria-required="true">
+								</div>
+								<br>
+								<div class="category">
+									<star>*</star> Required fields</div>
+							</div>
+							<div class="card-footer">
+								<button type="submit" name="submit" class="btn btn-info btn-fill pull-right">Submit</button>
+								<button type="reset" style="margin-right: 20px;" class="btn btn-danger btn-fill pull-right">Reset</button>
+								<div class="clearfix"></div>
+							</div>
 						</form>
 					</div>
-					<?php
-							$query1=mysqli_query($con,"select now() from DUAL");
-							$val = mysqli_fetch_array($query1);
-							$value=date("Y-m-d", strtotime($val[0]));
-							$query=mysqli_query($con,"SELECT * FROM test WHERE test_id='$id' and start_date='$value'");
-							$numrows=mysqli_num_rows($query);
-							if($numrows>0)
-							{
-								$row=mysqli_fetch_row($query);
-
-								echo "<div class='card' style='width: 50%; background-color: #F3EBD6; margin-left: auto; margin-right: auto; padding: 5px;' >
-									<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'>$row[2]</h4></div>
-									<hr style='margin: 0px;'>
-									<div class='' style='width: 100%;'>
-										<div class='card-body' style='padding: 10px;'><b>Duration :</b> $row[4]</div>
-										<div class='card-body' style='padding: 10px;'><b>Questions :</b> $row[5] </div>
-										<div class='card-body' style='padding: 10px;'><b>Points on correct answer :</b> $row[6] </div>
-										<div class='card-body' style='padding: 10px;'><b>Points deducted on wrong answer :</b> $row[7] </div>
-										<div class='card-body' style='padding: 10px;'><b>Passing marks :</b> $row[8] </div>
-									</div>
-								</div>
-								";
-							}
-							else
-								echo "<script type='text/javascript'>alert('TEST NOT STARTED!!');</script>";
-						?>
-						<?php
-							if(isset($_POST['start']))
-							{
-								//$query=mysqli_query($con,"select now() from DUAL");
-								//echo "<script>console$query</script>";
-								//$row=mysql_fetch_assoc($query);
-								//echo $row;
-								//$query1=mysqli_query($con,"SELECT * FROM result WHERE test_id='$id' and user_id='$user'");
-								//$numrows=mysqli_num_rows($query1);
-								/*if($numrows>0)
-								{
-									echo "<script type='text/javascript'>alert('YOU HAVE GIVEN THE TEST !!');</script>";
-								}
-								else
-								{*/
-									@$_SESSION['ques_num']=$row[5];
-									@$_SESSION['start_num']=0;
-									@$_SESSION['test_id']=$row[0];
-									@$_SESSION['duration']=$row[4];
-									
-									//@$_SESSION['endtime']=date('m/d/Y h:i:s a', time());
-									echo("<script>location.href = '".test.".php';</script>");
-								//}
-								
-							}
-
-					?>
-					<br>
+				</div>
 			</div>
+	<?php
+
+		if(isset($_POST["submit"]))
+		{
+			$uname=$_POST['username'];
+			$userh=$_POST['userh'];
+			$pass=$_POST['pass'];
+			$jyear=$_POST['jyear'];
+			$id=$_POST['course'];
+			$type="student";
+			$sql="insert into user(u_handle,u_pass,type) values ('$userh','$pass','$type')";
+			if ($con->query($sql) === TRUE) {
+						$last_id = mysqli_insert_id($con);
+						$query=mysqli_query($con,"insert into student values ('$last_id','$uname','$id','$jyear')");
+						if(query)
+							echo "<script type='text/javascript'>alert('Student Added!')</script>";
+			}
+			else
+				echo "<script type='text/javascript'>alert('Student already exist!')</script>";
+
+		}
+	?>
 			<footer class="footer">
 				<div class="container-fluid">
 					<nav class="pull-left">
@@ -259,6 +289,11 @@
 		demo.initOverviewDashboard();
 		demo.initCirclePercentage();
 
+	});
+</script>
+<script type="text/javascript">
+	$().ready(function() {
+		demo.initFormExtendedDatetimepickers();
 	});
 </script>
 

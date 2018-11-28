@@ -5,6 +5,8 @@
 	}
 	$user=$_SESSION['sess_user'];
 	$n=$_SESSION['sess_name'];
+	// echo "LOGGED IN USER IS -----";
+	// echo $user;
 
 	/*if(!isset($_GET)) {
 		$topic =$_GET['user_id'];
@@ -34,6 +36,16 @@
 
 	<!--  CSS for Demo Purpose, don't include it in your project     -->
 	<link href="assets/css/demo.css" rel="stylesheet" />
+	<style media="">
+	.responsive-cards {
+		width: 47.4%;
+	}
+		@media only screen and (max-width: 700px){
+	    .responsive-cards {
+	        width: 95%;
+	    }
+		}
+	</style>
 
 	<!--  Fonts and icons     -->
 	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
@@ -55,64 +67,55 @@
 			<div class="sidebar-wrapper">
 				<ul class="nav">
 					<li>
-						<a href="home.php">
-	              <i class="ti-panel"></i>
+						<a href="a_home.php">
+							<i class="ti-panel"></i>
 								<p>Home</p>
-	          </a>
+						</a>
+					</li>
+					<li>
+						<a href="course.php">
+							<i class="ti-panel"></i>
+								<p>Course</p>
+						</a>
+					</li>
+					<li>
+						<a href="subject.php">
+							<i class="ti-panel"></i>
+								<p>Subject</p>
+						</a>
 					</li>
 					<li class="active">
-						<a data-toggle="collapse" href="#componentsExamples">
-							<i class="ti-ruler-pencil"></i>
-							<p>Tests
-							   <b class="caret"></b>
-							</p>
+						<a href="teacher.php">
+							<i class="ti-panel"></i>
+								<p>Teacher</p>
 						</a>
-						<div class="collapse in" id="componentsExamples">
-							<ul class="nav">
-								<li>
-									<a href="create_test.php">
-										<span class="sidebar-mini">CT</span>
-										<span class="sidebar-normal">Create Test</span>
-									</a>
-								</li>
-								<li>
-									<a href="view_test.php">
-										<span class="sidebar-mini">VT</span>
-										<span class="sidebar-normal">View/Edit Test</span>
-									</a>
-								</li>
-								<li class="active">
-									<a href="delete_test.php">
-										<span class="sidebar-mini">DT</span>
-										<span class="sidebar-normal">Delete Test</span>
-									</a>
-								</li>
-							</ul>
-						</div>
 					</li>
 					<li>
-						<a href="produce_result.php">
-                <i class="ti-clipboard"></i>
-                <p>
-									Results
-                </p>
-            </a>
+<<<<<<< HEAD
+						<a href="addstudent.php">
+=======
+						<a href="student.php">
+>>>>>>> 9e5ee92163407d2a3a0a160318d14bb81f170aac
+							<i class="ti-panel"></i>
+								<p>Student</p>
+						</a>
 					</li>
+					
 					<li>
 						<a href="changepassword.php">
-                <i class="ti-key"></i>
-                <p>
+							<i class="ti-key"></i>
+							<p>
 									Change Password
-                </p>
-            </a>
+							</p>
+						</a>
 					</li>
 					<li>
 						<a href="logout.php">
-                <i class="ti-share"></i>
-                <p>
+							<i class="ti-share"></i>
+							<p>
 									Logout
-                </p>
-            </a>
+							</p>
+						</a>
 					</li>
 				</ul>
 			</div>
@@ -130,27 +133,25 @@
                 <span class="icon-bar bar2"></span>
                 <span class="icon-bar bar3"></span>
             </button>
-						<a class="navbar-brand" href="delete_test.php">
-							Delete Test
-						</a>
+						<p class="navbar-brand">
+							<b>WELCOME <?php echo $n ?></b>
+						</p>
 						
-						</div>
-						<div class="collapse navbar-collapse">
+					</div>
+					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav navbar-right">
-							<li>
-								
-							</li>
+							
 						</ul>
-						</div>
+					</div>
 				</div>
 			</nav>
-			<div class="content">
-			<div class='card-body' style='padding: 10px;'>
-			<form method='post'>
-					<?php
+			<div class="content" style="margin-top: 0px; padding-top: 0px;padding-left: 0px;">
+
+			<div class="responsive-cards" style="float: left; margin: 7px; margin-left: 2%; background-color: #BDCFB7; border-radius: 7px;">
+				<?php
 							$con=mysqli_connect('localhost','root','') or die(mysql_error());
 							mysqli_select_db($con,'online_test') or die("cannot select DB");
-							$query=mysqli_query($con,"SELECT t.test_id,t.test_name,t.start_date,t.duration,t.total_ques FROM test t,subject s WHERE s.t_id='$user' and s.s_id=t.sub_id order by t.start_date desc");
+							$query=mysqli_query($con,"SELECT * FROM teacher");
 							$numrows=mysqli_num_rows($query);
 
 							if($numrows>0)
@@ -158,70 +159,115 @@
 							{
 								$id=$row[0];
 
-								echo "
-								<div class='card' style='width: 50%; margin-left: auto; margin-right: auto;' >
-									<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;color: #50C1E9; text-shadow: none;'>$row[1]</h4></div>
+								echo "<div class='card' style='margin: 6px;margin-bottom: 15px;' >
+									 <a href='editTeacher.php?id=$id'>
+									<div class='card-body' style='padding: 10px;'><h4 style='margin: 0px;'><b>User Handle :</b>$row[1]</h4></div>
 									<hr style='margin: 0px;'>
 									<div class='' style='width: 100%;'>
-										<div class='card-body' style='padding: 10px;'><b>Start Date :</b> $row[2]</div>
-										<div class='card-body' style='padding: 10px;'><b>Duration : </b> $row[3] </div>
-										<div class='card-body' style='padding: 10px;'><b>Total Questions : </b> $row[4] </div>
-
+										<div class='card-body' style='padding: 10px;'><b>Teacher Name :</b> $row[2]</div>
+										<div class='card-body' style='padding: 10px;'><b>Email : </b> $row[3] </div>
 									</div>
-									<div style='padding: 15px; text-align: center; margin-right: 20px;'>
-											<button type='submit' name='delete' value='$row[0]' class='btn btn-danger data-active-color btn-fill pull-right'>Delete Test</button>
-										<div class='clearfix'></div>
-									</div>
-								</div>
-								";
-
+									</a>
+								</div>";
 							}
 							else
 							{
-								echo "<div class='card-body' style='padding: 10px;'><h6 style='margin: 0px;'>NO TEST CREATED BY YOU TILL NOW</h6></div>";
+								echo "<div class='card-body' style='padding: 10px;'><h6 style='margin: 0px;'>NO Teacher Added</h6></div>";
 							}
 				?>
-				</form>
-				<?php
-				if(isset($_POST["delete"]))
-				{
-					$confrm="Test Deleted !!";
-					$id=$_POST["delete"];
-					echo $id;
-					$query3=mysqli_query($con,"delete from useranswer where test_id='$id'");
-					$query2=mysqli_query($con,"delete from result where test_id='$id'");
-					$query1=mysqli_query($con,"delete from ques_link where test_id='$id'");
-					$query=mysqli_query($con,"delete from test where test_id='$id'");
-					
-					if($query && $query1 && $query2)
-					{
-						echo "<script type='text/javascript'>alert('$confrm');</script>";
-						echo("<script>location.href = '".delete_test.".php';</script>");
-					}
-
-				}
-				?>
-			</div>
-		</div>
-		<footer class="footer">
-			<div class="container-fluid">
-				<nav class="pull-left">
-					<ul>
-						<li>
-							<a href="new.html">
-									About
-							</a>
-						</li>
-					</ul>
-				</nav>
-				<div class="copyright pull-right">
-					&copy;
-					<script>
-						document.write(new Date().getFullYear())
-					</script>, made with <i class="fa fa-heart heart"></i> by Team MCA
 				</div>
+				<div class="responsive-cards" style="float: right; margin: 7px; padding-left:60px; background-color:; border-radius: 7px;">
+				<div class="">
+							<form method="post">
+								<div class="card" data-background="color" data-color="blue">
+									<div class="card-header">
+										<h3 class="card-title">Add Teacher</h3>
+									</div>
+									<div class="card-content">
+										<div class="form-group">
+											<label>User Handle</label>
+											<input type="text" placeholder="User Handle" name="username" class="form-control input-no-border">
+										</div>
+										<div class="form-group">
+											<label>Teacher Name</label>
+											<input type="text" placeholder="Teacher Name" name="tname" class="form-control input-no-border">
+										</div>
+										<div class="form-group">
+											<label>Password</label>
+											<input type="password" placeholder="Password" name="password" class="form-control input-no-border">
+										</div>
+										<div class="form-group">
+											<label>Confirm Password</label>
+											<input type="password" placeholder="Confirm Password" name="cpassword" class="form-control input-no-border">
+										</div>
+										<div class="form-group">
+											<label>Email</label>
+											<input type="mail" placeholder="Email" name="mail" class="form-control input-no-border">
+										</div>
+									</div>
+									<div class="card-footer text-center">
+										<button type="submit" value="login" name="submit" class="btn btn-fill btn-wd ">ADD</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<?php
+						if(isset($_POST["submit"])){
+							$not="Fill all fields !!";
+							$u_handle=$_POST['username'];
+							$t_name=$_POST['tname'];
+							$pass=$_POST['password'];
+							$cpass=$_POST['cpassword'];
+							$mail=$_POST['mail'];
+							$a="teacher";
+							if($pass==$cpass)
+							{
+							$query=mysqli_query($con,"SELECT * FROM user where u_handle='$u_handle'");
+							$numrows=mysqli_num_rows($query);
+							if($numrows==0)
+							{
+								
+								$sql="INSERT INTO user(u_handle,u_pass,type) VALUES('$u_handle','$pass','$a')";
+								$result=mysqli_query($con,$sql);
+								$row1=mysqli_query($con,"SELECT user_id from user where u_handle='$u_handle'");
+								$row=mysqli_fetch_row($row1);
+								$id=$row[0];
+								$sql="INSERT INTO teacher VALUES('$id','$u_handle','$t_name','$mail')";
+								$result1=mysqli_query($con,$sql);
+								if($result && $result1){
+									//header("Location: index.php");
+									echo "<script type='text/javascript'>alert('successfully added! ')</script>";
+								} else {
+									echo "<script type='text/javascript'>alert('Failure!')</script>";
+								}
+							}
+							else
+								echo "<script type='text/javascript'>alert('User Handle already exist!')</script>";
+						}
+						}
+					?>
 			</div>
-		</footer>
+			<footer class="footer" style="border: 0px;">
+				<div class="container-fluid">
+					<nav class="pull-left">
+						<ul>
+							<li>
+								<a href="new.html">
+                    About
+                </a>
+							</li>
+						</ul>
+					</nav>
+					<div class="copyright pull-right">
+						&copy;
+						<script>
+							document.write(new Date().getFullYear())
+						</script>, made with <i class="fa fa-heart heart"></i> by Team MCA
+					</div>
+				</div>
+			</footer>
+		</div>
 	</div>
 </body>
 
@@ -233,6 +279,7 @@
 
 <!--  Forms Validations Plugin -->
 <script src="assets/js/jquery.validate.min.js"></script>
+
 <!-- Promise Library for SweetAlert2 working on IE -->
 <script src="assets/js/es6-promise-auto.min.js"></script>
 

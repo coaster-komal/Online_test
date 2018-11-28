@@ -5,10 +5,10 @@ $id=$_GET['id'];
 @$_SESSION["tn"]=$id;
 			$con=mysqli_connect('localhost','root','') or die(mysql_error());
 			mysqli_select_db($con,'online_test') or die("cannot select DB");
-			$query5=mysqli_query($con,"select * from tests where test_id='$id'");
+			$query5=mysqli_query($con,"select * from test where test_id='$id'");
 			$row=mysqli_fetch_row($query5);
 			$test_n=$row[2];
-			$total_marks=$row[4]*$row[7];
+			$total_marks=$row[5]*$row[6];
 							$query=mysqli_query($con,"SELECT * FROM result WHERE test_id='$id'");
 							$numrows=mysqli_num_rows($query);
 ?>
@@ -133,16 +133,12 @@ $id=$_GET['id'];
 						<a class="navbar-brand" href="produce_result.php">
 							Result
 						</a>
-						<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px; margin-right: 20px;padding: 10px 15px;" class="btn btn-success hidden-md hidden-lg pull-right">
-							Start Test
-						</button>
+						
 						</div>
 						<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav navbar-right">
 							<li>
-								<button onclick="location.href='start_test.php';" style="line-height: 1.42857;font-weight: 900; margin: 16px 0px;margin-top: 16px;margin-right: 0px;margin-bottom: 16px;margin-left: 0px;padding: 10px 15px;" class="btn btn-success hidden-sm">
-									Start Test
-								</button>
+								
 							</li>
 						</ul>
 						</div>
